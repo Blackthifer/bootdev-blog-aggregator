@@ -70,9 +70,24 @@ func registerHandler(s *State, args []string) error{
 func resetHandler(s *State, args []string) error{
 	err := s.DB.DeleteAllUsers(context.Background())
 	if err != nil{
-		return fmt.Errorf("Reset failed")
+		return fmt.Errorf("Reset failed: %w", err)
 	}
 	fmt.Println("Reset complete")
+	return nil
+}
+
+func usersHandler(s *State, args []string) error{
+	users, err := s.DB.GetUsers(context.Background())
+	if err != nil {
+		return fmt.Errorf("Failed fetching users: %w", err)
+	}
+	for _, user := range users{
+		printStr := "* " + user.UserName
+		if user.UserName == s.Config.UserName{
+			printStr += " (current)"
+		}
+		fmt.Println(printStr)
+	}
 	return nil
 }
 
@@ -99,5 +114,6 @@ func InitCommands() *Commands{
 	cmds.register("login", loginHandler)
 	cmds.register("register", registerHandler)
 	cmds.register("reset", resetHandler)
+	cmds.register("users", usersHandler)
 	return cmds
 }

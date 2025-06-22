@@ -9,3 +9,6 @@ WHERE user_name = $1 LIMIT 1;
 
 -- name: DeleteAllUsers :exec
 TRUNCATE users;
+
+-- name: GetUsers :many
+SELECT * FROM users;
