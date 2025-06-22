@@ -2,15 +2,31 @@ package main
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/Blackthifer/bootdev-blog-aggregator/internal/command"
 	"github.com/Blackthifer/bootdev-blog-aggregator/internal/config"
 )
 
+const dbConnStr = "postgres://postgres:postgres@localhost:5432/gator"
+
 func main(){
-	gatorConfig := config.Read()
-	gatorConfig.SetUser("Hessel")
-	gatorConfig = config.Read()
-	fmt.Println("Config:")
-	fmt.Println("- db_url:", gatorConfig.DbUrl)
-	fmt.Println("- current_user_name:", gatorConfig.UserName)
+	gatorConfig, err := config.Read()
+	if err != nil{
+		fmt.Println(err)
+	}
+	state := &command.State{
+		Config: gatorConfig,
+	}
+	cmds := command.InitCommands()
+	cmd := os.Args[1:]
+	if len(cmd) == 0{
+		fmt.Println("No command specified")
+		os.Exit(1)
+	}
+	err = cmds.Run(state, cmd[0], cmd[1:])
+	if err != nil{
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }

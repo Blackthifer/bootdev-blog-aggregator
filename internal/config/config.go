@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 )
 
@@ -14,41 +13,37 @@ type Config struct{
 
 const gatorConfig = ".gatorconfig.json"
 
-func Read() *Config{
+func Read() (*Config, error){
 	gatorPath, err := getConfigPath()
 	if err != nil{
-		log.Println(err)
-		return nil
+		return nil, fmt.Errorf("%w", err)
 	}
 	jsonData, err := os.ReadFile(gatorPath)
 	if err != nil{
-		log.Println("Error reading gatorconfig:", err)
-		return nil
+		return nil, fmt.Errorf("Error reading gatorconfig: %w", err)
 	}
 	jsonConfig := &Config{}
 	if err = json.Unmarshal(jsonData, jsonConfig); err != nil{
-		log.Println("Error parsing from json:", err)
-		return nil
+		return nil, fmt.Errorf("Error parsing from json: %w", err)
 	}
-	return jsonConfig
+	return jsonConfig, nil
 }
 
-func (c *Config) SetUser(user string){
+func (c *Config) SetUser(user string) error{
 	c.UserName = user
 	jsonData, err := json.Marshal(c)
 	if err != nil{
-		log.Println("Error parsing into json:", err)
-		return
+		return fmt.Errorf("Error parsing into json: %w", err)
 	}
 	gatorPath, err := getConfigPath()
 	if err != nil{
-		log.Println(err)
-		return
+		return fmt.Errorf("%w", err)
 	}
 	err = os.WriteFile(gatorPath, jsonData, os.ModePerm)
 	if err != nil{
-		log.Println("Error writing to file:", err)
+		return fmt.Errorf("Error writing to file: %w", err)
 	}
+	return nil
 }
 
 func getConfigPath() (string, error){
