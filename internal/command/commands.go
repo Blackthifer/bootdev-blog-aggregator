@@ -67,6 +67,15 @@ func registerHandler(s *State, args []string) error{
 	return nil
 }
 
+func resetHandler(s *State, args []string) error{
+	err := s.DB.DeleteAllUsers(context.Background())
+	if err != nil{
+		return fmt.Errorf("Reset failed")
+	}
+	fmt.Println("Reset complete")
+	return nil
+}
+
 func (c *Commands) Run(s *State, cmd string, args []string) error{
 	cmdFunc, ok := c.handlers[cmd]
 	if !ok{
@@ -89,5 +98,6 @@ func InitCommands() *Commands{
 	}
 	cmds.register("login", loginHandler)
 	cmds.register("register", registerHandler)
+	cmds.register("reset", resetHandler)
 	return cmds
 }

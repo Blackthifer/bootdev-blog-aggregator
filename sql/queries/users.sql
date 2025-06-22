@@ -6,3 +6,6 @@ RETURNING *;
 -- name: GetUserByName :one
 SELECT * FROM users
 WHERE user_name = $1 LIMIT 1;
+
+-- name: DeleteAllUsers :exec
+TRUNCATE users;
