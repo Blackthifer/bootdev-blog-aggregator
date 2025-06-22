@@ -1,7 +1,11 @@
 package command
 
 import (
+	"context"
 	"fmt"
+	"log"
+	"math/rand"
+	"time"
 
 	"github.com/Blackthifer/bootdev-blog-aggregator/internal/config"
 	"github.com/Blackthifer/bootdev-blog-aggregator/internal/database"
@@ -25,11 +29,41 @@ func loginHandler(s *State, args []string) error{
 	if len(args) == 0{
 		return fmt.Errorf("login is missing username argument")
 	}
-	err := s.Config.SetUser(args[0])
+	_, err := s.DB.GetUserByName(context.Background(), args[0])
+	if err != nil{
+		return fmt.Errorf("user '%s' does not exist", args[0])
+	}
+	err = s.Config.SetUser(args[0])
 	if err != nil{
 		return fmt.Errorf("login failed: %w", err)
 	}
 	fmt.Printf("User was set to %s\n", args[0])
+	return nil
+}
+
+func registerHandler(s *State, args []string) error{
+	if len(args) == 0{
+		return fmt.Errorf("register is missing username argument")
+	}
+	_, err := s.DB.GetUserByName(context.Background(), args[0])
+	if err == nil{
+		return fmt.Errorf("user '%s' already exists", args[0])
+	}
+	uParams := database.CreateUserParams{
+		ID: rand.Int31(),
+		CreatedAt: time.Now(),
+		UserName: args[0],
+	}
+	_, err = s.DB.CreateUser(context.Background(), uParams)
+	if err != nil{
+		return fmt.Errorf("Error creating user: %w", err)
+	}
+	log.Println(uParams)
+	fmt.Println("Created user: ", args[0])
+	err = loginHandler(s, args)
+	if err != nil{
+		return fmt.Errorf("%w", err)
+	}
 	return nil
 }
 
@@ -54,5 +88,6 @@ func InitCommands() *Commands{
 		handlers: map[string]func(*State, []string) error{},
 	}
 	cmds.register("login", loginHandler)
+	cmds.register("register", registerHandler)
 	return cmds
 }
