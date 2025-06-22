@@ -4,10 +4,12 @@ import (
 	"fmt"
 
 	"github.com/Blackthifer/bootdev-blog-aggregator/internal/config"
+	"github.com/Blackthifer/bootdev-blog-aggregator/internal/database"
 )
 
 type State struct{
 	Config *config.Config
+	DB *database.Queries
 }
 
 type Command struct{
