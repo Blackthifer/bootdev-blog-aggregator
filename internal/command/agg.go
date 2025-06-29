@@ -102,7 +102,7 @@ func followHandler(s *State, args []string, user database.User) error{
 	if err != nil{
 		return fmt.Errorf("Error creating feed follow row: %w", err)
 	}
-	fmt.Printf("%s follows %s", feedFollow.UserName, feedFollow.FeedName)
+	fmt.Printf("%s follows %s\n", feedFollow.UserName, feedFollow.FeedName)
 	return nil
 }
 
