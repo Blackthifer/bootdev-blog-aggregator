@@ -116,9 +116,9 @@ func InitCommands() *Commands{
 	cmds.register("reset", resetHandler)
 	cmds.register("users", usersHandler)
 	cmds.register("agg", aggHandler)
-	cmds.register("addfeed", addFeedHandler)
+	cmds.register("addfeed", requireLoggedInUser(addFeedHandler))
 	cmds.register("feeds", feedsHandler)
-	cmds.register("follow", followHandler)
-	cmds.register("following", followingHandler)
+	cmds.register("follow", requireLoggedInUser(followHandler))
+	cmds.register("following", requireLoggedInUser(followingHandler))
 	return cmds
 }

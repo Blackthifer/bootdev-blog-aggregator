@@ -19,13 +19,9 @@ func aggHandler(s *State, args []string) error{
 	return nil
 }
 
-func addFeedHandler(s *State, args []string) error{
+func addFeedHandler(s *State, args []string, user database.User) error{
 	if len(args) < 2{
 		return fmt.Errorf("Missing %v argument(s)\nUsage: addfeed <name> <url>", 2 - len(args))
-	}
-	user, err := s.DB.GetUserByName(context.Background(), s.Config.UserName)
-	if err != nil{
-		return err
 	}
 	params := database.CreateFeedParams{
 		ID: rand.Int31(),
@@ -38,7 +34,7 @@ func addFeedHandler(s *State, args []string) error{
 	if err != nil{
 		return fmt.Errorf("Error creating feed: %w", err)
 	}
-	err = followHandler(s, []string{feed.FeedUrl})
+	err = followHandler(s, []string{feed.FeedUrl}, user)
 	return err
 }
 
@@ -57,17 +53,13 @@ func feedsHandler(s *State, args []string) error{
 	return nil
 }
 
-func followHandler(s *State, args []string) error{
+func followHandler(s *State, args []string, user database.User) error{
 	if len(args) < 1{
 		return fmt.Errorf("Missing argument feed url\nUsage: follow <feed_url>")
 	}
 	feed, err := s.DB.GetFeedByUrl(context.Background(), args[0])
 	if err != nil{
 		return fmt.Errorf("Error finding feed: %w", err)
-	} 
-	user, err := s.DB.GetUserByName(context.Background(), s.Config.UserName)
-	if err != nil{
-		return fmt.Errorf("Error looking up current user: %w", err)
 	}
 	params := database.CreateFeedFollowParams{
 		ID: rand.Int31(),
@@ -83,11 +75,7 @@ func followHandler(s *State, args []string) error{
 	return nil
 }
 
-func followingHandler(s *State, args []string) error{
-	user, err := s.DB.GetUserByName(context.Background(), s.Config.UserName)
-	if err != nil{
-		return fmt.Errorf("Error looking up current user: %w", err)
-	}
+func followingHandler(s *State, args []string, user database.User) error{
 	feeds, err := s.DB.GetFeedFollowsForUser(context.Background(), user.ID)
 	if err != nil{
 		return fmt.Errorf("Error getting feed follows for user: %w", err)
