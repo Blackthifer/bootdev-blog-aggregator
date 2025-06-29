@@ -85,3 +85,15 @@ func followingHandler(s *State, args []string, user database.User) error{
 	}
 	return nil
 }
+
+func unFollowHandler(s *State, args []string, user database.User) error{
+	if len(args) < 1{
+		return fmt.Errorf("Missing feed url argument\nUsage: unfollow <feed_url>")
+	}
+	err := s.DB.DeleteFeedFollow(context.Background(), database.DeleteFeedFollowParams{UserID: user.ID, FeedUrl: args[0]})
+	if err != nil{
+		return fmt.Errorf("Error unfollowing feed %s: %w", args[0], err)
+	}
+	fmt.Printf("%s unfollows %s", user.UserName, args[0])
+	return nil
+}

@@ -120,5 +120,6 @@ func InitCommands() *Commands{
 	cmds.register("feeds", feedsHandler)
 	cmds.register("follow", requireLoggedInUser(followHandler))
 	cmds.register("following", requireLoggedInUser(followingHandler))
+	cmds.register("unfollow", requireLoggedInUser(unFollowHandler))
 	return cmds
 }
