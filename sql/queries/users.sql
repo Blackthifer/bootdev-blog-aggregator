@@ -8,7 +8,7 @@ SELECT * FROM users
 WHERE user_name = $1 LIMIT 1;
 
 -- name: DeleteAllUsers :exec
-TRUNCATE users;
+DELETE FROM users;
 
 -- name: GetUsers :many
 SELECT * FROM users;
