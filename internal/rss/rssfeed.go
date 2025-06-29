@@ -42,7 +42,7 @@ func FetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error){
 	if err != nil{
 		return nil, fmt.Errorf("Error reading RSSFeed data: %w", err)
 	}
-	var feed *RSSFeed
+	feed := &RSSFeed{}
 	if err = xml.Unmarshal(rssData, feed); err != nil{
 		return nil, fmt.Errorf("Error unmarshaling RSSFeed data: %w", err)
 	}
