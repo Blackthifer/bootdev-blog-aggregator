@@ -21,7 +21,7 @@ func aggHandler(s *State, args []string) error{
 
 func addFeedHandler(s *State, args []string) error{
 	if len(args) < 2{
-		return fmt.Errorf("Missing %v arguments", 2 - len(args))
+		return fmt.Errorf("Missing %v argument(s)\nUsage: addfeed <name> <url>", 2 - len(args))
 	}
 	user, err := s.DB.GetUserByName(context.Background(), s.Config.UserName)
 	if err != nil{
