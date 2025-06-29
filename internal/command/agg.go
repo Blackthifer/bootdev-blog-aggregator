@@ -43,9 +43,9 @@ func scrapeFeed(s *State) error{
 	if err != nil{
 		return err
 	}
-	fmt.Printf("Feed %s:\n", mark.FeedUrl)
+	fmt.Printf("Feed %s:\n", dbFeed.FeedName)
 	for _, item := range feed.Channel.Item{
-		fmt.Printf("* %s : %s", item.Title, item.PubDate)
+		fmt.Printf("* %s : %s\n", item.Title, item.PubDate)
 	}
 	return nil
 }
